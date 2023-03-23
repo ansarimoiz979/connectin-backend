@@ -1,0 +1,42 @@
+1-
+register api : user will register first and then login by login service function.
+user already exist scenario
+validation for name, username, email, password[not applied]
+response should be : user registered successfully.
+user already exist.
+internal server error not handled yet.
+username duplicate dalne k scenario handle krna h
+jwt module and key is registred in auth module file [ move jwt key constant to environment file ]
+move jwt key and expiration time to env files.
+install bycript to hashed password and jwt token
+
+auth guard
+the user/client is not logged in (is not authenticated)
+the user/client is logged in (is authenticated)
+
+Guards
+A guard is a class annotated with the @Injectable() decorator, which implements the CanActivate interface.
+Guards have a single responsibility. They determine whether a given request will be handled by the route handler or not, depending on certain conditions (like permissions, roles, ACLs, etc.) present at run-time. This is often referred to as authorization. Authorization (and its cousin, authentication, with which it usually collaborates) has typically been handled by middleware in traditional Express applications. Middleware is a fine choice for authentication, since things like token validation and attaching properties to the request object are not strongly connected with a particular route context (and its metadata).
+But middleware, by its nature, is dumb. It doesn't know which handler will be executed after calling the next() function. On the other hand, Guards have access to the ExecutionContext instance, and thus know exactly what's going to be executed next. They're designed, much like exception filters, pipes, and interceptors, to let you interpose processing logic at exactly the right point in the request/response cycle, and to do so declaratively. This helps keep your code DRY and declarative.
+HINT
+Guards are executed after all middleware, but before any interceptor or pipe.
+
+guard implements
+https://dev.to/vignesh_pugaz/nestjs-series-guards-4pn7
+
+learn about @public() decorator
+
+
+list of user apis
+1. self details
+2. other user details
+3. list of user can see by admin
+4. search user by username 
+5. check username is already available
+6. check is email already register or not
+7. change avtar
+8. get profile details by user name
+9. 
+10.
+auth api
+1login 2. register

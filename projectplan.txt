@@ -1,0 +1,13 @@
+user module
+//api
+update profile , see list of user by admin, get profile details self and others,
+auth module
+//login, register, logout
+//auth, jwt, passport,
+swagger configuration
+
+
+//start with user module
+1- apis related to user : login , register, complete my profile, list of user by admin, get profile details self and others
+get profile by username, upload avtar, isemail taken, isusernametaken, update profile, change user status by admin
+2- auth api : login, register, logout
