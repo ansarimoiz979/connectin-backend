@@ -76,6 +76,6 @@ Nest is [MIT licensed](LICENSE).
 <h1>List of API'S</h1>
 <h2> authentication API'S</h2>
 <ul>
-  <li>User registration api - [registration](http://localhost:4000/v1/auth/register)</li>
+  <li>User registration api - [registration]( https://localhost:4000/v1/auth/register )</li>
   <li>User login api</li>
 </ul>
