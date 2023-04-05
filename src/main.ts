@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // Validation pipe global
   app.useGlobalPipes(new ValidationPipe());
-
+  app.enableCors()
   // Global api endpoint prefix
   app.setGlobalPrefix('/v1');
 

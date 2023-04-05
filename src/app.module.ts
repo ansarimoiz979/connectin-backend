@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { FollowingEntity } from './modules/user/entities/following.entity';
 import { UserEntity } from './modules/user/entities/user.entity';
 import { UserModule } from './modules/user/user.module';
 
@@ -16,9 +17,12 @@ import { UserModule } from './modules/user/user.module';
       password: '123456',
       database: "linkedin",
       entities : [
-        UserEntity
+        UserEntity,
+        FollowingEntity
       ],
-      synchronize : true
+      synchronize : true,
+      logging : true
+ 
     }),
     AuthModule,
     UserModule
@@ -29,6 +33,6 @@ import { UserModule } from './modules/user/user.module';
 })
 export class AppModule {
   constructor(){
-    console.log("app module",process.env.POSTGRES_HOST);    
+    console.log("app moduless",process.env.POSTGRES_HOST);    
   }
 }
