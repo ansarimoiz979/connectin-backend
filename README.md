@@ -64,10 +64,35 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
+- Author - Moiz Ansari
+- Github  - [ansarimoiz979](https://github.com/ansarimoiz979)
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+<h1>List of API'S</h1>
+<h2>Authentication API'S</h2>
+<ul>
+  <li>User registration api.</li>
+  <li>User login api.</li>
+</ul>
+<h2> User API'S</h2>
+<ul>
+  <li>Get list of all the user.</li>
+  <li>get self details.</li>
+  <li>user suggetions.</li>
+  <li>Other profile details.</li>
+  <li>Get recent search.</li>
+  <li>Add recent search.</li>
+  <li>Remove recent search.</li>
+  <li>Is username taken.</li>
+  <li>Is email taken.</li>
+  <li>Add avatar.</li>
+  <li>search profile by username.</li>
+  <li>Request to follow user.</li>
+  <li>Unfollow a user.</li>
+  <li>Update profile details.</li>
+  <li>Change password</li>
+  <li>Forgot password</li>
+</ul>
