@@ -11,15 +11,16 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Get self details' })
-  // @UseGuards( AuthGuard )
+  @UseGuards( AuthGuard )
   @Get('self-detail')
   selfUserDetails( @Request() req) {
-    // let id = req.user.id
-    return this.userService.findSelfDetailsById(4, true);
+    let id = req.user.id
+    return this.userService.findSelfDetailsById(id, true);
   }
 
   @ApiOperation({ summary: 'see other user details' })
   //get other person details without personal data
+  @UseGuards(AuthGuard)
   @Get('user-detail')
   otherUserDetails( @Request() req, @Query('id') userId: number,) {
     return this.userService.findSelfDetailsById(userId, false);
@@ -27,22 +28,21 @@ export class UserController {
 
   //@pending
   @ApiOperation({ summary: 'get all user list with pagination by admin' })
-  //only admin can check
-  // @UseGuards( AuthGuard )
   //role guard for admin
+  @UseGuards(AuthGuard)
   @Get('user-list')
   userList( 
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Request() req
   ) {
-    // let id = req.user.id
+    let id = req.user.id
     // return this.userService.findSelfUser(id);
   }
   
   @ApiOperation({ summary: 'search user by name email username by anyone' })
   //search user in search box
-  // @UseGuards( AuthGuard )
+  @UseGuards( AuthGuard )
   @Get('search-user')
   async getAll(    @Query('page') page: number,
   @Query('limit') limit: number,@Query('search') search: string, @Request() req): Promise<any[]> {
@@ -102,11 +102,11 @@ export class UserController {
   // }
 
   @ApiOperation({ summary: 'get profile details by username' })
+  @UseGuards(AuthGuard)
   @Get(':username')
   async getProfileByUsername(@Param('username') username: string, @Request() req): Promise<any> {
     //@pending
-    // return await this.userService.getProfileByUsername(username, req.user.id);
-    return await this.userService.getProfileByUsername(username, 1);
+    return await this.userService.getProfileByUsername(username, req.user.id);
   }
 
   // @ApiOperation({ summary: 'Update self profile details' })
@@ -118,14 +118,15 @@ export class UserController {
   
   @ApiOperation({ summary: 'follow a user' })
   @Post('follow/:id')
+  @UseGuards(AuthGuard)
   // @HttpCode(HttpStatus.NO_CONTENT)
   async follow(@Param('id') id: number, @Request() req): Promise<any> {
-    // return await this.userService.follow(+id, req.user.id);
-    return await this.userService.follow(+id, 1);
+    return await this.userService.follow(+id, req.user.id);
   }
 
   @ApiOperation({ summary: 'follow a user' })
   @Post('unfollow/:id')
+  @UseGuards(AuthGuard)
   // @HttpCode(HttpStatus.NO_CONTENT)
   async unfollow(@Param('id') id: number, @Request() req): Promise<void> {
     return await this.userService.unfollow(+id, req.user.id);
@@ -134,6 +135,7 @@ export class UserController {
   @ApiOperation({ summary: 'find self followers' })
   @Post('followers/:id')
   // @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard)
   async getUserFollowers(@Param('id') id: number):  Promise<FollowingEntity[]> {
     return await this.userService.getUserFollowers(+id);
   }

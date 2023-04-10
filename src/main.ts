@@ -14,14 +14,14 @@ async function bootstrap() {
   // Swagger setup
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('LinkedIn api')
-    .setDescription('The LinkedIn API description')
+    .setTitle('ConnectIn api')
+    .setDescription('The ConnectIn API description')
     .setVersion('1.0')
-    .addTag('LinkedIn')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'access-token',
-    )
+    .addTag('ConnectIn')
+    // .addBearerAuth(
+    //   { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+    //   'access-token',
+    // )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
