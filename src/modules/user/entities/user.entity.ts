@@ -50,6 +50,14 @@ export class UserEntity  extends BaseEntity {
   // })
   // @JoinColumn()
   // avatar: PublicFileEntity;
+    //relation with the images entity which is public file entity
+  // coverImage : PublicFileEntity;
+  // @OneToOne(() => PublicFileEntity, {
+  //   eager: true,
+  //   nullable: true,
+  // })
+  // @JoinColumn()
+  // coverImage: PublicFileEntity;
   @Column({  length :  1024, nullable: true })
   description:string;
   @Column({  length :  512, nullable: true })
