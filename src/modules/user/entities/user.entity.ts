@@ -7,6 +7,7 @@ import { BaseEntity } from "src/modules/common/types/base.entity";
 import { BeforeInsert, Column, Entity, OneToMany } from "typeorm";
 import { FollowingEntity } from "./following.entity";
 import * as bcrypt from 'bcrypt';
+import { PostEntity } from "src/modules/posts/entities/post.entity";
 export interface UserTokensInterface {
     readonly user?: UserEntity;
     readonly accessToken: string;
@@ -84,12 +85,12 @@ export class UserEntity  extends BaseEntity {
   followedUsers: FollowingEntity[];
   followedNumber?: number;
 
-  // @OneToMany(() => PostEntity, (post) => post.author, {
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'CASCADE',
-  // })
-  // posts: PostEntity[];
-  // postsNumber?: number;
+  @OneToMany(() => PostEntity, (post) => post.author, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  posts: PostEntity[];
+  postsNumber?: number;
 
   // @OneToMany(() => PostFeedEntity, (pf) => pf.user, {
   //   onUpdate: 'CASCADE',

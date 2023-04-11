@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { FindOneOptions, Not, Repository } from 'typeorm';
 import { CreateUserDTO } from './dto';
 import { FollowingEntity } from './entities/following.entity';
 import { UserEntity } from './entities/user.entity';
@@ -44,9 +44,10 @@ export class UserService {
         return userDetails
       }
 
-      // async getByID(id: number, options: FindOneOptions<UserEntity> = {}): Promise<UserEntity> {
-      //   return await this.users.findOne(id, options);
-      // }
+      async getByID(id: number, options: FindOneOptions<UserEntity> = {}): Promise<UserEntity> {
+        // return await this.users.findOne(id, options);
+        return await this.users.findOne({ where : {  id : id}});
+      }
 
 
       

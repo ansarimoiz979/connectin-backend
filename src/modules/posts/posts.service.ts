@@ -1,48 +1,47 @@
-// import { forwardRef, Inject, Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 // import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
-// import { Repository } from 'typeorm';
-// import { UserService } from '../user/user.service';
-// import { CreatePostDto } from './dto/create-post.dto';
-// import { UpdatePostDto } from './dto/update-post.dto';
+import { Repository } from 'typeorm';
+import { UserService } from '../user/user.service';
 // import { CommentEntity } from './entities/comment.entity';
 // import { CommentLikeEntity } from './entities/commentLike.entity';
-// import { PostEntity } from './entities/post.entity';
+import { PostEntity } from './entities/post.entity';
 // import { PostFeedEntity } from './entities/postFeed.entity';
 // import { PostLikeEntity } from './entities/postLike.entity';
 // import { ReportEntity } from './entities/report.entity';
 // import { TagEntity } from './entities/tag.entity';
+import { CreatePostDTO } from './dto';
 
-// @Injectable()
-// export class PostsService {
-//   constructor(
-//     @InjectRepository(PostEntity)
-//     private posts: Repository<PostEntity>,
-//     @InjectRepository(PostLikeEntity)
-//     private postLikes: Repository<PostLikeEntity>,
-//     @InjectRepository(PostFeedEntity)
-//     private postFeed: Repository<PostFeedEntity>,
+@Injectable()
+export class PostsService {
+  constructor(
+    @InjectRepository(PostEntity)
+    private posts: Repository<PostEntity>,
+    // @InjectRepository(PostLikeEntity)
+    // private postLikes: Repository<PostLikeEntity>,
+    // @InjectRepository(PostFeedEntity)
+    // private postFeed: Repository<PostFeedEntity>,
 
-//     @InjectRepository(ReportEntity)
-//     private postReports: Repository<ReportEntity>,
+    // @InjectRepository(ReportEntity)
+    // private postReports: Repository<ReportEntity>,
 
-//     @InjectRepository(CommentEntity)
-//     private postComments: Repository<CommentEntity>,
-//     @InjectRepository(CommentLikeEntity)
-//     private postCommentLikes: Repository<CommentLikeEntity>,
+    // @InjectRepository(CommentEntity)
+    // private postComments: Repository<CommentEntity>,
+    // @InjectRepository(CommentLikeEntity)
+    // private postCommentLikes: Repository<CommentLikeEntity>,
 
-//     @InjectRepository(TagEntity)
-//     private postTags: Repository<TagEntity>,
+    // @InjectRepository(TagEntity)
+    // private postTags: Repository<TagEntity>,
 
-//     // @Inject(FilesService)
-//     // private readonly filesService: FilesService,
+    // @Inject(FilesService)
+    // private readonly filesService: FilesService,
 
-//     @Inject(forwardRef(() => UserService))
-//     private readonly userService: UserService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
 
-//     // @Inject(NotificationsService)
-//     // private readonly notificationsService: NotificationsService
-//   ) {}
+    // @Inject(NotificationsService)
+    // private readonly notificationsService: NotificationsService
+  ) {}
 
 //   async getAll(
 //     queryOptions: IPaginationOptions = { page: 1, limit: 10 },
@@ -165,7 +164,7 @@
 
 //   async getByID(id: number): Promise<PostEntity> {
 //     // return await this.posts.findOneOrFail(id, { relations: ['users', 'tags'] });
-//     return await this.posts.findOneOrFail(id, { relations: ['author', 'tags'] });
+//     return await this.posts.findOneOrFail({  where : {  id : id}});
 //   }
 //   async getComments(id: number, currentUserID: number): Promise<CommentEntity[]> {
 //     const currentUserRootComments = await this.postComments
@@ -262,67 +261,68 @@
 //   }
 
 //   async create(file: Express.Multer.File, payload: CreatePostDTO, userID: number): Promise<PostEntity> {
-//     const user = await this.userService.getByID(userID);
-//     const uploadedFile = await this.filesService.uploadPublicFile({
-//       file,
-//       quality: 95,
-//       imageMaxSizeMB: 20,
-//       type: 'image',
-//     });
-//     const post = await this.posts.save({
-//       description: payload.description,
-//       file: uploadedFile,
-//       author: user,
-//     });
+    async create( payload: CreatePostDTO, userID: number): Promise<PostEntity> {
+    const user = await this.userService.getByID(userID);
+    // const uploadedFile = await this.filesService.uploadPublicFile({
+    //   file,
+    //   quality: 95,
+    //   imageMaxSizeMB: 20,
+    //   type: 'image',
+    // });
+    const post = await this.posts.save({
+      description: payload.description,
+    //   file: uploadedFile,
+      author: user,
+    });
 
-//     try {
-//       const parsedTags = JSON.parse(payload.tags);
-//       const formattedTags = await Promise.all(
-//         parsedTags?.map(async (t) => {
-//           const tagEntity = await this.postTags.findOne({ where: { name: t } });
-//           if (!tagEntity)
-//             return {
-//               name: t,
-//             };
-//           else
-//             return {
-//               id: tagEntity.id,
-//             };
-//         })
-//       );
+    // try {
+    //   const parsedTags = JSON.parse(payload.tags);
+    //   const formattedTags = await Promise.all(
+    //     parsedTags?.map(async (t) => {
+    //       const tagEntity = await this.postTags.findOne({ where: { name: t } });
+    //       if (!tagEntity)
+    //         return {
+    //           name: t,
+    //         };
+    //       else
+    //         return {
+    //           id: tagEntity.id,
+    //         };
+    //     })
+    //   );
 
-//       const savedPost = await this.posts.save({
-//         ...post,
-//         tags: formattedTags,
-//       });
+      const savedPost = await this.posts.save({
+        ...post,
+        // tags: formattedTags,
+      });
 
-//       const allUserFollowers = await this.userService.getUserFollowers(userID);
-//       console.log('allUserFollowers', allUserFollowers);
-//       // TODO: move to queue?
-//       await Promise.all(
-//         allUserFollowers.map(async (following) => {
-//           await this.postFeed.save({
-//             user: following.user,
-//             post: savedPost,
-//           });
-//           const feedCount = await this.postFeed.count({ where: { user: following.user } });
-//           console.log('feedCount', feedCount);
-//           const maxUserFeedNumber = 20;
-//           if (feedCount > maxUserFeedNumber) {
-//             const oldestPost = await this.postFeed.findOne({
-//               where: { user: following.user },
-//               order: { createdAt: 'ASC' },
-//             });
-//             await this.postFeed.delete(oldestPost.id);
-//           }
-//         })
-//       );
-//     } catch (e) {
-//       console.log(e);
-//     }
+    //   const allUserFollowers = await this.userService.getUserFollowers(userID);
+    //   console.log('allUserFollowers', allUserFollowers);
+    //   // TODO: move to queue?
+    //   await Promise.all(
+    //     allUserFollowers.map(async (following) => {
+    //       await this.postFeed.save({
+    //         user: following.user,
+    //         post: savedPost,
+    //       });
+    //       const feedCount = await this.postFeed.count({ where: { user: following.user } });
+    //       console.log('feedCount', feedCount);
+    //       const maxUserFeedNumber = 20;
+    //       if (feedCount > maxUserFeedNumber) {
+    //         const oldestPost = await this.postFeed.findOne({
+    //           where: { user: following.user },
+    //           order: { createdAt: 'ASC' },
+    //         });
+    //         await this.postFeed.delete(oldestPost.id);
+    //       }
+    //     })
+    //   );
+    // } catch (e) {
+    //   console.log(e);
+    // }
 
-//     return post;
-//   }
+    return post;
+  }
 
 //   async update(id: number, payload: UpdatePostDTO): Promise<PostEntity> {
 //     if (payload.tags) {
@@ -449,4 +449,4 @@
 //       });
 //     }
 //   }
-// }
+}

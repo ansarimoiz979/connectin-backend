@@ -1,15 +1,19 @@
-// import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request, UseInterceptors, UploadedFile, HttpCode, HttpStatus } from '@nestjs/common';
-// import { PostsService } from './posts.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request, UseInterceptors, UploadedFile, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { PostsService } from './posts.service';
 // import { Pagination } from 'nestjs-typeorm-paginate';
-// import { PostEntity } from './entities/post.entity';
+import { PostEntity } from './entities/post.entity';
 // import { TagEntity } from './entities/tag.entity';
 // import { CommentEntity } from './entities/comment.entity';
-// import { UserEntity } from '../user/entities/user.entity';
-// import { FileInterceptor } from '@nestjs/platform-express';
-// import { CreateCommentDTO, CreatePostDTO, UpdatePostDTO } from './dto';
-// @Controller('posts')
-// export class PostsController {
-//   constructor(private readonly postsService: PostsService) {}
+import { UserEntity } from '../user/entities/user.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateCommentDTO, CreatePostDTO, UpdatePostDTO } from './dto';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+@ApiBearerAuth()
+@ApiTags("Post")
+@Controller('posts')
+export class PostsController {
+  constructor(private readonly postsService: PostsService) {}
 
   
 //   @Get()
@@ -19,7 +23,8 @@
 //     @Query('tab') tab = '',
 //     @Request() req
 //   ): Promise<Pagination<PostEntity>> {
-//     return await this.postsService.getAll({ page, limit }, tab, req.user.id);
+    // ): Promise<PostEntity> {
+    // return await this.postsService.getAll({ page, limit }, tab, req.user.id);
 //   }
 //   @Get('tags')
 //   async getTags(@Query('search') search: string): Promise<TagEntity[]> {
@@ -34,7 +39,7 @@
 //   async getComments(@Param('id') id: number, @Request() req): Promise<CommentEntity[]> {
 //     return await this.postsService.getComments(+id, req.user.id);
 //   }
-//   // TODO: need to add likes pagination. on frontend fetch next page when user scrolls to dialog bottom
+  // TODO: need to add likes pagination. on frontend fetch next page when user scrolls to dialog bottom
 //   @Get('likes/:id')
 //   async getLikes(@Param('id') id: number, @Request() req): Promise<UserEntity[]> {
 //     return await this.postsService.getLikes(+id, req.user.id);
@@ -45,14 +50,16 @@
 //   }
 
 //   @UseInterceptors(FileInterceptor('file'))
-//   @Post()
-//   async create(
-//     @UploadedFile() file: Express.Multer.File,
-//     @Body() payload: CreatePostDTO,
-//     @Request() req
-//   ): Promise<PostEntity> {
-//     return await this.postsService.create(file, payload, req.user.id);
-//   }
+@ApiOperation({ summary: 'Create new post' })  
+@Post()
+  @UseGuards( AuthGuard )
+  async create(
+    // @UploadedFile() file: Express.Multer.File ,
+    @Body() payload: CreatePostDTO,
+    @Request() req
+  ): Promise<PostEntity> {
+    return await this.postsService.create(payload, req.user.id);
+  }
 
 //   @Patch(':id')
 //   async update(@Param('id') id: number, @Body() postData: UpdatePostDTO): Promise<PostEntity> {
@@ -94,4 +101,4 @@
 //   async toggleCommentLike(@Param('id') id: number, @Request() req): Promise<void> {
 //     return await this.postsService.toggleCommentLike(+id, req.user.id);
 //   }
-// }
+}

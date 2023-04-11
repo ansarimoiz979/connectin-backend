@@ -6,6 +6,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { FollowingEntity } from './modules/user/entities/following.entity';
 import { UserEntity } from './modules/user/entities/user.entity';
 import { UserModule } from './modules/user/user.module';
+import { PostEntity } from './modules/posts/entities/post.entity';
+import { PostsModule } from './modules/posts/posts.module';
 
 @Module({
   imports: [
@@ -18,14 +20,16 @@ import { UserModule } from './modules/user/user.module';
       database: "linkedin",
       entities : [
         UserEntity,
-        FollowingEntity
+        FollowingEntity,
+        PostEntity
       ],
       synchronize : true,
       logging : true
  
     }),
     AuthModule,
-    UserModule
+    UserModule,
+    PostsModule
   ],
   
   controllers: [AppController],
