@@ -1,4 +1,15 @@
-import { Controller,Request, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Request,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UserService } from './user.service';
@@ -11,10 +22,10 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Get self details' })
-  @UseGuards( AuthGuard )
+  @UseGuards(AuthGuard)
   @Get('self-detail')
-  selfUserDetails( @Request() req) {
-    let id = req.user.id
+  selfUserDetails(@Request() req) {
+    let id = req.user.id;
     return this.userService.findSelfDetailsById(id, true);
   }
 
@@ -22,7 +33,7 @@ export class UserController {
   //get other person details without personal data
   @UseGuards(AuthGuard)
   @Get('user-detail')
-  otherUserDetails( @Request() req, @Query('id') userId: number,) {
+  otherUserDetails(@Request() req, @Query('id') userId: number) {
     return this.userService.findSelfDetailsById(userId, false);
   }
 
@@ -31,21 +42,25 @@ export class UserController {
   //role guard for admin
   @UseGuards(AuthGuard)
   @Get('user-list')
-  userList( 
+  userList(
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Request() req
+    @Request() req,
   ) {
-    let id = req.user.id
+    let id = req.user.id;
     // return this.userService.findSelfUser(id);
   }
-  
+
   @ApiOperation({ summary: 'search user by name email username by anyone' })
   //search user in search box
-  @UseGuards( AuthGuard )
+  @UseGuards(AuthGuard)
   @Get('search-user')
-  async getAll(    @Query('page') page: number,
-  @Query('limit') limit: number,@Query('search') search: string, @Request() req): Promise<any[]> {
+  async getAll(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('search') search: string,
+    @Request() req,
+  ): Promise<any[]> {
     return await this.userService.getAll(search, 1);
     //@pending
     // return await this.userService.getAll(search, req.user.id);
@@ -104,7 +119,10 @@ export class UserController {
   @ApiOperation({ summary: 'get profile details by username' })
   @UseGuards(AuthGuard)
   @Get(':username')
-  async getProfileByUsername(@Param('username') username: string, @Request() req): Promise<any> {
+  async getProfileByUsername(
+    @Param('username') username: string,
+    @Request() req,
+  ): Promise<any> {
     //@pending
     return await this.userService.getProfileByUsername(username, req.user.id);
   }
@@ -115,7 +133,6 @@ export class UserController {
   //   return await this.userService.update(+id, payload);
   // }
 
-  
   @ApiOperation({ summary: 'follow a user' })
   @Post('follow/:id')
   @UseGuards(AuthGuard)
@@ -136,11 +153,7 @@ export class UserController {
   @Post('followers/:id')
   // @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  async getUserFollowers(@Param('id') id: number):  Promise<FollowingEntity[]> {
+  async getUserFollowers(@Param('id') id: number): Promise<FollowingEntity[]> {
     return await this.userService.getUserFollowers(+id);
   }
-
-
 }
-
-
