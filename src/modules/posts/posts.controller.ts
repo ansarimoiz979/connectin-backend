@@ -49,16 +49,16 @@ export class PostsController {
 //     return await this.postsService.getTagByName(name);
 //   }
 
-//   @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'))
 @ApiOperation({ summary: 'Create new post' })  
 @Post()
   @UseGuards( AuthGuard )
   async create(
-    // @UploadedFile() file: Express.Multer.File ,
+    @UploadedFile() file: Express.Multer.File ,
     @Body() payload: CreatePostDTO,
     @Request() req
   ): Promise<PostEntity> {
-    return await this.postsService.create(payload, req.user.id);
+    return await this.postsService.create(file , payload, req.user.id);
   }
 
 //   @Patch(':id')

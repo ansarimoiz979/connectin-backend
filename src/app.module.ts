@@ -8,6 +8,7 @@ import { UserEntity } from './modules/user/entities/user.entity';
 import { UserModule } from './modules/user/user.module';
 import { PostEntity } from './modules/posts/entities/post.entity';
 import { PostsModule } from './modules/posts/posts.module';
+import { TagEntity } from './modules/posts/entities/tag.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { PostsModule } from './modules/posts/posts.module';
       entities : [
         UserEntity,
         FollowingEntity,
-        PostEntity
+        PostEntity,
+        TagEntity
       ],
       synchronize : true,
       logging : true

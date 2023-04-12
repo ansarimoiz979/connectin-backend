@@ -21,6 +21,7 @@
 //    import { PostFeedEntity } from './postFeed.entity';
  import { BaseEntity } from 'src/modules/common/types/base.entity';
  import { UserEntity } from 'src/modules/user/entities/user.entity';
+import { TagEntity } from './tag.entity';
   
    @Entity()
    export class PostEntity extends BaseEntity 
@@ -28,13 +29,13 @@
      @Column({ nullable: true })
      description: string;
   
-    //  @ManyToMany(() => TagEntity, (t) => t.posts, { cascade: true, nullable: true })
-    //  @JoinTable()
-    //  tags: TagEntity[] | string[];
-    //  @AfterLoad()
-    //  flatTags(): void {
-    //    this.tags = this.tags?.map((t) => t.name) || [];
-    //  }
+     @ManyToMany(() => TagEntity, (t) => t.posts, { cascade: true, nullable: true })
+     @JoinTable()
+     tags: TagEntity[] | string[];
+     @AfterLoad()
+     flatTags(): void {
+       this.tags = this.tags?.map((t) => t.name) || [];
+     }
   
      @ManyToOne(() => UserEntity, (user) => user.posts, {
        eager: true,

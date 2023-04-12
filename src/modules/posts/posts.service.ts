@@ -11,6 +11,7 @@ import { PostEntity } from './entities/post.entity';
 // import { ReportEntity } from './entities/report.entity';
 // import { TagEntity } from './entities/tag.entity';
 import { CreatePostDTO } from './dto';
+import { TagEntity } from './entities/tag.entity';
 
 @Injectable()
 export class PostsService {
@@ -30,8 +31,8 @@ export class PostsService {
     // @InjectRepository(CommentLikeEntity)
     // private postCommentLikes: Repository<CommentLikeEntity>,
 
-    // @InjectRepository(TagEntity)
-    // private postTags: Repository<TagEntity>,
+    @InjectRepository(TagEntity)
+    private postTags: Repository<TagEntity>,
 
     // @Inject(FilesService)
     // private readonly filesService: FilesService,
@@ -260,9 +261,10 @@ export class PostsService {
 //       .getOneOrFail();
 //   }
 
-//   async create(file: Express.Multer.File, payload: CreatePostDTO, userID: number): Promise<PostEntity> {
-    async create( payload: CreatePostDTO, userID: number): Promise<PostEntity> {
+  async create(file: Express.Multer.File, payload: CreatePostDTO, userID: number): Promise<PostEntity> {
     const user = await this.userService.getByID(userID);
+    console.log("log file", file);
+    
     // const uploadedFile = await this.filesService.uploadPublicFile({
     //   file,
     //   quality: 95,
@@ -276,6 +278,7 @@ export class PostsService {
     });
 
     // try {
+    //     console.log("tags",payload.tags);        
     //   const parsedTags = JSON.parse(payload.tags);
     //   const formattedTags = await Promise.all(
     //     parsedTags?.map(async (t) => {
@@ -291,10 +294,10 @@ export class PostsService {
     //     })
     //   );
 
-      const savedPost = await this.posts.save({
-        ...post,
-        // tags: formattedTags,
-      });
+    //   const savedPost = await this.posts.save({
+    //     ...post,
+    //     tags: formattedTags,
+    //   });
 
     //   const allUserFollowers = await this.userService.getUserFollowers(userID);
     //   console.log('allUserFollowers', allUserFollowers);
@@ -317,11 +320,13 @@ export class PostsService {
     //       }
     //     })
     //   );
+    // return savedPost;
     // } catch (e) {
     //   console.log(e);
     // }
 
     return post;
+
   }
 
 //   async update(id: number, payload: UpdatePostDTO): Promise<PostEntity> {
