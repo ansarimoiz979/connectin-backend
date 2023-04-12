@@ -22,6 +22,7 @@
  import { BaseEntity } from 'src/modules/common/types/base.entity';
  import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { TagEntity } from './tag.entity';
+import { PostLikeEntity } from './postLike.entity';
   
    @Entity()
    export class PostEntity extends BaseEntity 
@@ -44,11 +45,11 @@ import { TagEntity } from './tag.entity';
      @JoinColumn({ name: 'authorID' })
      author: UserEntity;
   
-    //  @OneToMany(() => PostLikeEntity, (pl) => pl.post, {
-    //    cascade: true,
-    //  })
-    //  likes: PostLikeEntity[];
-    //  likesNumber?: number;
+     @OneToMany(() => PostLikeEntity, (pl) => pl.post, {
+       cascade: true,
+     })
+     likes: PostLikeEntity[];
+     likesNumber?: number;
   
     //  @OneToMany(() => CommentEntity, (comment) => comment.post, {
     //    cascade: true,

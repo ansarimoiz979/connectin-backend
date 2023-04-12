@@ -8,6 +8,7 @@ import { BeforeInsert, Column, Entity, OneToMany } from "typeorm";
 import { FollowingEntity } from "./following.entity";
 import * as bcrypt from 'bcrypt';
 import { PostEntity } from "src/modules/posts/entities/post.entity";
+import { PostLikeEntity } from "src/modules/posts/entities/postLike.entity";
 export interface UserTokensInterface {
     readonly user?: UserEntity;
     readonly accessToken: string;
@@ -98,10 +99,10 @@ export class UserEntity  extends BaseEntity {
   // })
   // postFeed: PostFeedEntity[];
 
-  // @OneToMany(() => PostLikeEntity, (pl) => pl.user, {
-  //   cascade: true,
-  // })
-  // likedPosts: PostLikeEntity[];
+  @OneToMany(() => PostLikeEntity, (pl) => pl.user, {
+    cascade: true,
+  })
+  likedPosts: PostLikeEntity[];
 
   // @OneToMany(() => CommentLikeEntity, (cm) => cm.user, {
   //   onUpdate: 'CASCADE',
