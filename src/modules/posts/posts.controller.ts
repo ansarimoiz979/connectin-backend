@@ -9,6 +9,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateCommentDTO, CreatePostDTO, UpdatePostDTO } from './dto';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { extname } from 'path';
+import { diskStorage } from 'multer';
 @ApiBearerAuth()
 @ApiTags("Post")
 @Controller('posts')
@@ -49,10 +51,15 @@ export class PostsController {
 //     return await this.postsService.getTagByName(name);
 //   }
 
-  @UseInterceptors(FileInterceptor('file'))
+
 @ApiOperation({ summary: 'Create new post' })  
 @Post()
   @UseGuards( AuthGuard )
+  @UseInterceptors(FileInterceptor('file',{
+    storage: diskStorage({
+        destination : "./uploads",
+    }),
+  }))
   async create(
     @UploadedFile() file: Express.Multer.File ,
     @Body() payload: CreatePostDTO,

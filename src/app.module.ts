@@ -9,6 +9,7 @@ import { UserModule } from './modules/user/user.module';
 import { PostEntity } from './modules/posts/entities/post.entity';
 import { PostsModule } from './modules/posts/posts.module';
 import { TagEntity } from './modules/posts/entities/tag.entity';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -29,9 +30,11 @@ import { TagEntity } from './modules/posts/entities/tag.entity';
       logging : true
  
     }),
+    MulterModule.register( { dest : "./uploads" }),
     AuthModule,
     UserModule,
-    PostsModule
+    PostsModule,
+
   ],
   
   controllers: [AppController],
