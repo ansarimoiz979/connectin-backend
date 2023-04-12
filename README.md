@@ -73,7 +73,7 @@ Nest is [MIT licensed](LICENSE).
 
 ## Technologies used :
 
-
+```
 Nest.js
 Express
 Multer
@@ -81,6 +81,8 @@ Open api Swagger
 s3 bucket
 typeorm
 pg [ postgreSQL ]
+
+```
 
 <h1>List of API'S</h1>
 <h2>Authentication API'S</h2>
