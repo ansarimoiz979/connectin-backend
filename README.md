@@ -96,3 +96,8 @@ Nest is [MIT licensed](LICENSE).
   <li>Change password</li>
   <li>Forgot password</li>
 </ul>
+<h2>Posts API'S</h2>
+<ul>
+  <li>Create new post with description tag and images or video.</li>
+  <li>Get post into feed.</li>
+</ul>
