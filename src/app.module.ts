@@ -11,6 +11,7 @@ import { PostsModule } from './modules/posts/posts.module';
 import { TagEntity } from './modules/posts/entities/tag.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { PostLikeEntity } from './modules/posts/entities/postLike.entity';
+import { PostFeedEntity } from './modules/posts/entities/postFeed.entity';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { PostLikeEntity } from './modules/posts/entities/postLike.entity';
         FollowingEntity,
         PostEntity,
         TagEntity,
-        PostLikeEntity
+        PostLikeEntity,
+        PostFeedEntity
       ],
       synchronize : true,
       logging : true

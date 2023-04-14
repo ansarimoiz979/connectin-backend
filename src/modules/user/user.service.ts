@@ -99,7 +99,7 @@ export class UserService {
     // );
     return {
       ...user,
-      // isViewerFollowed: await this.getIsUserFollowed(user.id, currentUserID),
+      isViewerFollowed: await this.getIsUserFollowed(user.id, currentUserID),
       isViewerBlocked: false,
       // posts: formattedPosts,
     } as unknown as UserEntity;
@@ -140,6 +140,8 @@ export class UserService {
   async follow(targetID: number, currentUserID: number): Promise<any> {
     //check is already followed by currentuser
     const isFollowing = Boolean(await this.getUserFollowedEntity(  targetID , currentUserID))
+    console.log("follow", isFollowing);
+    
     // const isfollower = Boolean(await this.userFollowings
     //   .createQueryBuilder('follow')
     //   .where('follow.user.id = :currentUserID', { currentUserID })
@@ -192,4 +194,7 @@ export class UserService {
       .getMany();
   }
 
+  async getIsUserFollowed(targetID: number, userID: number): Promise<boolean> {
+    return Boolean(await this.getUserFollowedEntity(targetID, userID));
+  }
 }

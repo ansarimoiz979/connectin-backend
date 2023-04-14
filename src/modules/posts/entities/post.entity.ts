@@ -23,6 +23,7 @@
  import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { TagEntity } from './tag.entity';
 import { PostLikeEntity } from './postLike.entity';
+import { PostFeedEntity } from './postFeed.entity';
   
    @Entity()
    export class PostEntity extends BaseEntity 
@@ -33,10 +34,10 @@ import { PostLikeEntity } from './postLike.entity';
      @ManyToMany(() => TagEntity, (t) => t.posts, { cascade: true, nullable: true })
      @JoinTable()
      tags: TagEntity[] | string[];
-     @AfterLoad()
-     flatTags(): void {
-       this.tags = this.tags?.map((t) => t.name) || [];
-     }
+    //  @AfterLoad()
+    //  flatTags(): void {
+    //    this.tags = this.tags?.map((t) => t.name) || [];
+    //  }
   
      @ManyToOne(() => UserEntity, (user) => user.posts, {
        eager: true,
@@ -75,10 +76,10 @@ import { PostLikeEntity } from './postLike.entity';
     //     this.fileURL = this.file?.url;
     //   }
   
-    //  @OneToMany(() => PostFeedEntity, (pf) => pf.post, {
-    //    cascade: true,
-    //  })
-    //  feeds: PostFeedEntity[];
+     @OneToMany(() => PostFeedEntity, (pf) => pf.post, {
+       cascade: true,
+     })
+     feeds: PostFeedEntity[];
   
     //  isViewerLiked: boolean;
     //  isViewerSaved: boolean;

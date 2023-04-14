@@ -15,7 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-// import { Pagination } from 'nestjs-typeorm-paginate';
+import { Pagination } from 'nestjs-typeorm-paginate';
 import { PostEntity } from './entities/post.entity';
 // import { TagEntity } from './entities/tag.entity';
 // import { CommentEntity } from './entities/comment.entity';
@@ -32,16 +32,18 @@ import { diskStorage } from 'multer';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  //   @Get()
-  //   async getAll(
-  //     @Query('page') page: number,
-  //     @Query('limit') limit: number,
-  //     @Query('tab') tab = '',
-  //     @Request() req
-  //   ): Promise<Pagination<PostEntity>> {
-  // ): Promise<PostEntity> {
-  // return await this.postsService.getAll({ page, limit }, tab, req.user.id);
-  //   }
+    @Get()
+    async getAll(
+      @Query('page') page: number,
+      @Query('limit') limit: number,
+      @Query('tab') tab = '',
+      @Request() req
+    // ): Promise<Pagination<PostEntity>> {
+      ): Promise<any> {
+      return await this.postsService.getAll({ page, limit }, tab, req.user.id);
+    }
+
+
   //   @Get('tags')
   //   async getTags(@Query('search') search: string): Promise<TagEntity[]> {
   //     return await this.postsService.getTags(search);

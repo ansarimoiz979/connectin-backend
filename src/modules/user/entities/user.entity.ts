@@ -9,6 +9,7 @@ import { FollowingEntity } from "./following.entity";
 import * as bcrypt from 'bcrypt';
 import { PostEntity } from "src/modules/posts/entities/post.entity";
 import { PostLikeEntity } from "src/modules/posts/entities/postLike.entity";
+import { PostFeedEntity } from "src/modules/posts/entities/postFeed.entity";
 export interface UserTokensInterface {
     readonly user?: UserEntity;
     readonly accessToken: string;
@@ -93,11 +94,11 @@ export class UserEntity  extends BaseEntity {
   posts: PostEntity[];
   postsNumber?: number;
 
-  // @OneToMany(() => PostFeedEntity, (pf) => pf.user, {
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'CASCADE',
-  // })
-  // postFeed: PostFeedEntity[];
+  @OneToMany(() => PostFeedEntity, (pf) => pf.user, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  postFeed: PostFeedEntity[];
 
   @OneToMany(() => PostLikeEntity, (pl) => pl.user, {
     cascade: true,

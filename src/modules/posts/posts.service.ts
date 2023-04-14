@@ -13,6 +13,9 @@ import { PostEntity } from './entities/post.entity';
 import { CreatePostDTO } from './dto';
 import { TagEntity } from './entities/tag.entity';
 import { PostLikeEntity } from './entities/postLike.entity';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { PostFeedEntity } from './entities/postFeed.entity';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
 export class PostsService {
@@ -21,8 +24,8 @@ export class PostsService {
     private posts: Repository<PostEntity>,
     @InjectRepository(PostLikeEntity)
     private postLikes: Repository<PostLikeEntity>,
-    // @InjectRepository(PostFeedEntity)
-    // private postFeed: Repository<PostFeedEntity>,
+    @InjectRepository(PostFeedEntity)
+    private postFeed: Repository<PostFeedEntity>,
 
     // @InjectRepository(ReportEntity)
     // private postReports: Repository<ReportEntity>,
@@ -44,124 +47,129 @@ export class PostsService {
   // private readonly notificationsService: NotificationsService
   {}
 
-  //   async getAll(
-  //     queryOptions: IPaginationOptions = { page: 1, limit: 10 },
-  //     tag = '',
-  //     userID: number
-  //   ): Promise<Pagination<PostEntity>> {
-  //     const currentUser = await this.userService.getByID(userID);
+    async getAll(
+      queryOptions: IPaginationOptions = { page: 1, limit: 10 },
+      tag = '',
+      userID: number
+    ): Promise<Pagination<PostEntity>> {
+      const currentUser = await this.userService.getByID(userID);
 
-  //     if (!tag) {
-  //       const userPostFeed = await this.postFeed
-  //         .createQueryBuilder('feed')
-  //         .leftJoinAndSelect('feed.post', 'post')
-  //         .leftJoinAndSelect('post.author', 'author')
-  //         .leftJoinAndSelect('author.avatar', 'avatar')
-  //         .leftJoinAndSelect('post.file', 'file')
-  //         .leftJoinAndSelect('post.tags', 'tags')
+      if (!tag) {
+        const userPostFeed = await this.postFeed
+          .createQueryBuilder('feed')
+          .leftJoinAndSelect('feed.post', 'post')
+          .leftJoinAndSelect('post.author', 'author')
+          // .leftJoinAndSelect('author.avatar', 'avatar')
+          // .leftJoinAndSelect('post.file', 'file')
+          // .leftJoinAndSelect('post.tags', 'tags')
 
-  //         .where('feed.user.id = :userID', { userID })
-  //         .orderBy('feed.createdAt', 'DESC')
+          .where('feed.user.id = :userID', { userID })
+          .orderBy('feed.createdAt', 'DESC')
 
-  //         .take(Number(queryOptions.limit))
-  //         .skip((Number(queryOptions.page) - 1) * Number(queryOptions.limit))
-  //         .getMany();
-  //       const feedPosts = userPostFeed.map((f) => f.post);
+          .take(Number(queryOptions.limit))
+          .skip((Number(queryOptions.page) - 1) * Number(queryOptions.limit))
+          .getMany();
+        const feedPosts = userPostFeed.map((f) => f.post);
 
-  //       const yesterday = new Date();
-  //       yesterday.setDate(yesterday.getDate() - 1);
-  //       const recentOwnPosts =
-  //         Number(queryOptions.page) === 1
-  //           ? await this.posts
-  //               .createQueryBuilder('post')
-  //               .leftJoinAndSelect('post.author', 'author')
-  //               .leftJoinAndSelect('author.avatar', 'avatar')
-  //               .leftJoinAndSelect('post.file', 'file')
-  //               .leftJoinAndSelect('post.tags', 'tags')
-  //               .where('author.id = :userID', { userID })
-  //               .andWhere('post.createdAt > :yesterday', { yesterday })
-  //               .orderBy('post.createdAt', 'DESC')
-  //               .take(5)
-  //               .getMany()
-  //           : [];
-  //       const allPosts = [...recentOwnPosts, ...feedPosts];
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const recentOwnPosts =
+          Number(queryOptions.page) === 1
+            ? await this.posts
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.author', 'author')
+                // .leftJoinAndSelect('author.avatar', 'avatar')
+                // .leftJoinAndSelect('post.file', 'file')
+                // .leftJoinAndSelect('post.tags', 'tags')
+                .where('author.id = :userID', { userID })
+                .andWhere('post.createdAt > :yesterday', { yesterday })
+                .orderBy('post.createdAt', 'DESC')
+                .take(5)
+                .getMany()
+            : [];
+        const allPosts = [...recentOwnPosts, ...feedPosts];
 
-  //       const formattedFeedPosts = (await Promise.all(
-  //         allPosts.map(async (p) => this.formatPost(p, currentUser, tag))
-  //       )) as PostEntity[];
+        const formattedFeedPosts = (await Promise.all(
+          allPosts.map(async (p) => this.formatPost(p, currentUser, tag))
+        )) as PostEntity[];
 
-  //       if (formattedFeedPosts.length)
-  //         return {
-  //           items: formattedFeedPosts,
-  //           meta: {
-  //             currentPage: Number(queryOptions.page),
-  //             itemCount: formattedFeedPosts.length,
-  //             itemsPerPage: Number(queryOptions.limit),
-  //             // TODO: is it has any sense to make real pagination values?
-  //             totalItems: 50,
-  //             totalPages: 10,
-  //           },
-  //         };
-  //     }
+        if (formattedFeedPosts.length)
+          return {
+            items: formattedFeedPosts,
+            meta: {
+              currentPage: Number(queryOptions.page),
+              itemCount: formattedFeedPosts.length,
+              itemsPerPage: Number(queryOptions.limit),
+              // TODO: is it has any sense to make real pagination values?
+              totalItems: 50,
+              totalPages: 10,
+            },
+          };
+      }
 
-  //     const queryBuilder = this.posts
-  //       .createQueryBuilder()
-  //       .select('post')
-  //       .from(PostEntity, 'post')
-  //       .leftJoin('post.likes', 'likes')
-  //       .leftJoin('post.comments', 'comments')
-  //       .addSelect(
-  //         'COUNT(likes) + COUNT(comments) * 5 / (EXTRACT(EPOCH FROM NOW()) - EXTRACT(EPOCH FROM post.createdAt))',
-  //         'score'
-  //       )
-  //       .leftJoinAndSelect('post.author', 'author')
-  //       .leftJoinAndSelect('author.avatar', 'avatar')
-  //       .leftJoinAndSelect('post.file', 'file')
-  //       .leftJoinAndSelect('post.tags', 'tags')
-  //       .orderBy('score', 'DESC')
-  //       .groupBy('post.id')
-  //       .addGroupBy('author.id')
-  //       .addGroupBy('avatar.id')
-  //       .addGroupBy('file.id')
-  //       .addGroupBy('tags.id');
+      const queryBuilder = this.posts
+        .createQueryBuilder()
+        .select('post')
+        .from(PostEntity, 'post')
+        // .leftJoin('post.likes', 'likes')
+        // .leftJoin('post.comments', 'comments')
+        .addSelect(
+          'COUNT(likes) + COUNT(comments) * 5 / (EXTRACT(EPOCH FROM NOW()) - EXTRACT(EPOCH FROM post.createdAt))',
+          'score'
+        )
+        .leftJoinAndSelect('post.author', 'author')
+        .leftJoinAndSelect('author.avatar', 'avatar')
+        .leftJoinAndSelect('post.file', 'file')
+        .leftJoinAndSelect('post.tags', 'tags')
+        .orderBy('score', 'DESC')
+        .groupBy('post.id')
+        .addGroupBy('author.id')
+        .addGroupBy('avatar.id')
+        .addGroupBy('file.id')
+        .addGroupBy('tags.id');
 
-  //     // TODO: not working
-  //     if (tag) queryBuilder.where('tags.name IN :tag', { tag });
-  //     // if (tag) queryBuilder.where(':tag IN post.tags', { tag });
-  //     else {
-  //       const postsFeed = await this.postFeed
-  //         .createQueryBuilder('feed')
-  //         .select('feed.id')
-  //         .where('feed.user.id = :userID', { userID })
-  //         .getMany();
-  //       const postsFeedIDs = postsFeed.map((pf) => pf.id);
-  //       // TODO: not working. there are still post duplicates
-  //       if (postsFeedIDs.length) queryBuilder.where('post.id NOT IN (:...postsFeedIDs)', { postsFeedIDs });
-  //     }
+      // TODO: not working
+      if (tag) queryBuilder.where('tags.name IN :tag', { tag });
+      // if (tag) queryBuilder.where(':tag IN post.tags', { tag });
+      else {
+        const postsFeed = await this.postFeed
+          .createQueryBuilder('feed')
+          .select('feed.id')
+          .where('feed.user.id = :userID', { userID })
+          .getMany();
+        const postsFeedIDs = postsFeed.map((pf) => pf.id);
+        // TODO: not working. there are still post duplicates
+        if (postsFeedIDs.length) queryBuilder.where('post.id NOT IN (:...postsFeedIDs)', { postsFeedIDs });
+      }
 
-  //     const { items, meta } = await paginate<PostEntity>(queryBuilder, queryOptions);
+      const { items, meta } = await paginate<PostEntity>(queryBuilder, queryOptions);
 
-  //     const formattedPosts = (await Promise.all(
-  //       items.map(async (p) => this.formatPost(p, currentUser, tag))
-  //     )) as PostEntity[];
-  //     return { items: formattedPosts, meta };
-  //   }
-  //   async formatPost(p: PostEntity, currentUser: UserEntity, tag: string): Promise<PostEntity> {
-  //     return {
-  //       ...p,
-  //       author: {
-  //         ...p.author,
-  //         isViewerFollowed:
-  //           p.author.id === currentUser.id
-  //             ? false
-  //             : await this.userService.getIsUserFollowed(p.author.id, currentUser.id),
-  //       },
-  //       comments: tag ? [] : await this.postComments.find({ where: { post: p }, order: { createdAt: 'DESC' }, take: 2 }),
-  //       isViewerLiked: await this.getIsUserLikedPost(currentUser, p),
-  //       isViewerSaved: false,
-  //       isViewerInPhoto: false,
-  //     } as PostEntity;
-  //   }
+      const formattedPosts = (await Promise.all(
+        items.map(async (p) => this.formatPost(p, currentUser, tag))
+      )) as PostEntity[];
+      return { items: formattedPosts, meta };
+    }
+
+
+    
+    async formatPost(p: PostEntity, currentUser: UserEntity, tag: string): Promise<PostEntity> {
+      // async formatPost(p: PostEntity, currentUser: UserEntity, tag: string): Promise<any> {
+      // return {
+      //   ...p,
+      //   // author: {
+      //   //   ...p.author,
+      //   //   isViewerFollowed:
+      //   //    ( p.author.id === currentUser.id )
+      //   //       ? false
+      //   //       : await this.userService.getIsUserFollowed(p.author.id, currentUser.id) 
+      //   // },
+      //   // comments: tag ? [] : await this.postComments.find({ where: { post: p }, order: { createdAt: 'DESC' }, take: 2 }),
+      //   // isViewerLiked: await this.getIsUserLikedPost(currentUser, p),
+      //   // isViewerSaved: false,
+      //   // isViewerInPhoto: false,
+      // };
+      return {   ...p }
+    }
 
   //   async getByID(id: number): Promise<PostEntity> {
   //     // return await this.posts.findOneOrFail(id, { relations: ['users', 'tags'] });
@@ -227,9 +235,10 @@ export class PostsService {
   //     const likes = await this.postLikes.createQueryBuilder('likes').where('user.id = :id', { id }).getMany();
   //     return likes.map((l) => l.post);
   //   }
-  //   async getIsUserLikedPost(user: UserEntity, post: PostEntity): Promise<boolean> {
-  //     return Boolean(await this.postLikes.findOne({ where: { user, post }, relations: ['user', 'post'] }));
-  //   }
+    async getIsUserLikedPost(user: UserEntity, post: PostEntity): Promise<boolean> {
+      // return Boolean(await this.postLikes.findOne({ where: { user, post }, relations: ['user', 'post'] }));
+      return true
+    }
 
   //   async getTags(search: string): Promise<TagEntity[]> {
   //     if (!search.length) return [];
@@ -281,7 +290,7 @@ export class PostsService {
       author: user,
     });
 
-    // try {
+    try {
     //     console.log("tags",payload.tags);
     //   const parsedTags = JSON.parse(payload.tags);
     //   const formattedTags = await Promise.all(
@@ -303,33 +312,33 @@ export class PostsService {
     //     tags: formattedTags,
     //   });
 
-    //   const allUserFollowers = await this.userService.getUserFollowers(userID);
-    //   console.log('allUserFollowers', allUserFollowers);
+      const allUserFollowers = await this.userService.getUserFollowers(userID);
+      console.log('allUserFollowers', allUserFollowers);
     //   // TODO: move to queue?
-    //   await Promise.all(
-    //     allUserFollowers.map(async (following) => {
-    //       await this.postFeed.save({
-    //         user: following.user,
-    //         post: savedPost,
-    //       });
-    //       const feedCount = await this.postFeed.count({ where: { user: following.user } });
-    //       console.log('feedCount', feedCount);
-    //       const maxUserFeedNumber = 20;
-    //       if (feedCount > maxUserFeedNumber) {
-    //         const oldestPost = await this.postFeed.findOne({
-    //           where: { user: following.user },
-    //           order: { createdAt: 'ASC' },
-    //         });
-    //         await this.postFeed.delete(oldestPost.id);
-    //       }
-    //     })
-    //   );
-    // return savedPost;
-    // } catch (e) {
-    //   console.log(e);
-    // }
-
+      await Promise.all(
+        allUserFollowers.map(async (following) => {
+          await this.postFeed.save({
+            user: following.user,
+            post: post,
+          });
+          // const feedCount = await this.postFeed.count({ where: { user: following.user } });
+          // console.log('feedCount', feedCount);
+          const maxUserFeedNumber = 20;
+          // if (feedCount > maxUserFeedNumber) {
+          //   const oldestPost = await this.postFeed.findOne({
+          //     where: { user: following.user },
+          //     order: { createdAt: 'ASC' },
+          //   });
+          //   await this.postFeed.delete(oldestPost.id);
+          // }
+        })
+      );
     return post;
+    } catch (e) {
+      console.log(e);
+    }
+
+    // return post;
   }
 
   //   async update(id: number, payload: UpdatePostDTO): Promise<PostEntity> {
