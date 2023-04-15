@@ -33,11 +33,13 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
     @Get()
+    @UseGuards(AuthGuard)
     async getAll(
       @Query('page') page: number,
       @Query('limit') limit: number,
       @Query('tab') tab = '',
-      @Request() req
+      @Request() req,
+
     // ): Promise<Pagination<PostEntity>> {
       ): Promise<any> {
       return await this.postsService.getAll({ page, limit }, tab, req.user.id);
